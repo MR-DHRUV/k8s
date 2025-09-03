@@ -1,0 +1,40 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-deployment
+  namespace: nginx
+spec:
+  replicas: 2
+  selector: # defines the pods to be selected
+    matchLabels:
+      app: nginx
+  # Pod template: same as pod.yaml
+  template:
+    metadata:
+      name: nginx-dep-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /var/www/html # this is where nginx stores data
+          name: my-volume 
+      volumes:
+      - name: my-volume
+        persistentVolumeClaim:
+          claimName: local-pvc
+
+# kubectl apply -f deployment.yml
+# kubectl get deployment -n nginx
+# kubectl get pods -n nginx -o wide
+# kubectl get pvc -n nginx
+# kubectl describe pod/<pod-name> -n nginx
+
+# checkind data
+# kubectl get nodes
+# docker ps
+# docker exec -it fe28455ef4f7 --bash # id of container in which the node which runs any pod of this deployment is there

@@ -1,0 +1,46 @@
+kind: CronJob
+apiVersion: batch/v1
+metadata:
+  name: backup-cron-job
+  namespace: nginx
+spec:
+  schedule: "*/1 * * * *" # every minute
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: backup-cron-job-pod
+          labels:
+            app: cron-task
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: backup-cron-job-container
+            image: busybox:latest
+            command:
+              - sh
+              - -c
+              - >
+                echo "Backup Cron job started at $(date)" ;
+                mkdir -p /cronjob &&
+                mkdir -p /data &&
+                cp -r /data/ /cronjob/ &&
+                echo "Backup Completed"
+            volumeMounts:
+            - name: cronjob-storage
+              mountPath: /cronjob
+            - name: data-storage
+              mountPath: /data
+          volumes:
+          - name: cronjob-storage
+            hostPath:
+              path: /cronjob
+              type: DirectoryOrCreate
+          - name: data-storage
+            hostPath:
+              path: /data
+              type: DirectoryOrCreate
+
+# kubectl get cronjob -n nginx
+# kubectl get pods -n nginx
+# kubectl logs pod/<pod-name> -n nginx

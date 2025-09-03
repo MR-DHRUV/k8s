@@ -1,0 +1,26 @@
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: nginx-replicaset
+  namespace: nginx
+spec:
+  replicas: 2
+  selector: # defines the pods to be selected
+    matchLabels:
+      app: nginx
+  # Pod template: same as pod.yaml
+  template:
+    metadata:
+      name: nginx-rep-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+# kubectl apply -f replicaset.yml
+# kubectl get replicaset -n nginx
+# kubectl get pods -n nginx -o wide

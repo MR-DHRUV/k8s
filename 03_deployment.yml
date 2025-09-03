@@ -1,0 +1,30 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-deployment
+  namespace: nginx
+spec:
+  replicas: 2
+  selector: # defines the pods to be selected
+    matchLabels:
+      app: nginx
+  # Pod template: same as pod.yaml
+  template:
+    metadata:
+      name: nginx-dep-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+# kubectl apply -f deployment.yml
+# kubectl get deployment -n nginx
+# kubectl get pods -n nginx -o wide
+# kubectl scale deployment/nginx-deployment --replicas=5 -n nginx
+
+# Simulating rolling update by changing the image version to 1.26.2
+# kubectl set image deployment/nginx-deployment nginx=nginx:1.26.2 -n nginx

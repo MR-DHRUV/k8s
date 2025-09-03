@@ -1,0 +1,23 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: print-job
+  namespace: nginx
+spec:
+  completions: 1 # how many time it should run
+  parallelism: 1 # how many pods should run in parallel
+  template:
+    metadata:
+      name: print-job-pod
+      labels:
+        app: batch-task
+    spec:
+      containers:
+      - name: print-job-container
+        image: busybox:latest
+        command: ["sh", "-c", "echo Hello from the print job!"]
+        restartPolicy: Never
+
+# kubectl get jobs -n nginx
+# kubectl get pods -n nginx
+# kubectl get logs pod/<pod-name> -n nginx
