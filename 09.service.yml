@@ -1,0 +1,34 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-service
+  namespace: nginx
+spec:
+  selector:
+    app: nginx # name of the pod which we want to expose
+  ports:
+    - protocol: TCP
+      port: 80 # port on which service will be exposed
+      targetPort: 80 # pod's port on which application is running
+  type: ClusterIP
+
+
+# kubectl apply -f service.yml
+# kubectl get all -n nginx
+# NAME                                    READY   STATUS    RESTARTS        AGE
+# pod/nginx-deployment-7cd5f7d67c-bvrlq   1/1     Running   1 (3m23s ago)   14h
+# pod/nginx-deployment-7cd5f7d67c-ffpz4   1/1     Running   1 (3m23s ago)   14h
+
+# NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+# service/nginx-service   ClusterIP   10.96.176.48   <none>        80/TCP    37s
+
+# NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+# deployment.apps/nginx-deployment   2/2     2            2           14h
+
+# NAME                                          DESIRED   CURRENT   READY   AGE
+# replicaset.apps/nginx-deployment-7cd5f7d67c   2         2         2       14h
+
+# forward port 80 of docker to 8080 of wsl
+# kubectl port-forward service/nginx-service -n nginx 8080:80 --address=0.0.0.0
+
+#hostname -I # to get the IP address of the wsl

@@ -1,0 +1,26 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: snl-backend-deployment
+  namespace: snl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snl-backend
+  template:
+    metadata:
+      name: snl-backend-pod
+      labels:
+        app: snl-backend
+    spec:
+      containers:
+        - name: snl-backend-container
+          image: dhruvgupta742/snake-and-ladders:latest
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: ws
+              containerPort: 9999
+              protocol: TCP
