@@ -1,0 +1,52 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: mysql-statefulset
+  namespace: mysql
+spec:
+  serviceName: "mysql-service" # name of the headless service
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template: # pod template
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql-container
+          image: mysql:8.0
+          ports:
+            - name: mysql
+              containerPort: 3306 # default mysql port
+              protocol: TCP
+          env: # define environment variables required for mysql
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD # key from secret
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: MYSQL_DATABASE # key from configmap
+          volumeMounts: # as we want data to be persistent
+            - name: mysql-data
+              mountPath: /var/lib/mysql # default mysql data directory
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+
+
+# kubectl get pods -n mysql
+# kubectl get pods -n mysql
+# kubectl logs mysql-statefulset-0 -n mysql
+#  kubectl exec -it mysql-statefulset-0 -n mysql -- bash
+# mysql -u root -p

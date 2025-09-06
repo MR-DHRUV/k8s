@@ -1,0 +1,29 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-deployment
+  namespace: nginx
+spec:
+  replicas: 2
+  selector: # defines the pods to be selected
+    matchLabels:
+      app: nginx
+  # Pod template: same as pod.yaml
+  template:
+    metadata:
+      name: nginx-dep-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m" # minimum cpu required 0.1 cpu core
+            memory: "128Mi" # minimum memory required
+          limits:
+            memory: "258Mi" # maximum memory allowed
+            cpu: "200m" # maximum cpu allowed 0.2 cpu cores

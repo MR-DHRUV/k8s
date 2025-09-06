@@ -1,0 +1,9 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mysql-secret
+  namespace: mysql
+data:
+  MYSQL_ROOT_PASSWORD: cGFzc3dvcmQ= # base64 as it will encoded to binary for security purpose
+
+# echo -n 'password' | base64

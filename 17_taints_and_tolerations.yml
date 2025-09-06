@@ -1,0 +1,30 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-deployment
+  namespace: nginx
+spec:
+  replicas: 2
+  selector: # defines the pods to be selected
+    matchLabels:
+      app: nginx
+  # Pod template: same as pod.yaml
+  template:
+    metadata:
+      name: nginx-dep-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+      tolerations:
+      - key: "prod"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+# this pod could be scheduled on the node which has the taint "prod=true:NoSchedule" also on other eligible nodes
+# kubectl taint node k8s-demo-worker3 prod=true:NoSchedule

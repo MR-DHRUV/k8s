@@ -1,0 +1,55 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: snl-backend-deployment
+  namespace: snl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snl-backend
+  template:
+    metadata:
+      name: snl-backend-pod
+      labels:
+        app: snl-backend
+    spec:
+      containers:
+        - name: snl-backend-container
+          image: dhruvgupta742/snake-and-ladders:latest
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: ws
+              containerPort: 9999
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health # endpoint to check
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health # endpoint to check
+              port: http
+            initialDelaySeconds: 15 # wait before first probe
+            periodSeconds: 10 # probe frequency
+
+# kubectl apply probes.yml
+# kubectl get pods -n snl
+# kubectl describe pod snl-backend-deployment-xxxx -n snl
+
+# output
+# Containers:
+#   snl-backend-container:
+#     Container ID:   containerd://c59b179098198965711eca50e9fb0e112ae012c1cf8662e266fc430c222dfdd3
+#     Image:          dhruvgupta742/snake-and-ladders:latest
+#     Image ID:       docker.io/dhruvgupta742/snake-and-ladders@sha256:ba254bcee03b6cc1b3ecd155005a6e669dafc30025c64ef15ffe7d219bdbc3bd
+#     Ports:          8080/TCP, 9999/TCP
+#     Host Ports:     0/TCP, 0/TCP
+#     State:          Running
+#       Started:      Sat, 06 Sep 2025 23:31:38 +0530
+#     Ready:          True
+#     Restart Count:  0
+#     Liveness:       http-get http://:http/health delay=0s timeout=1s period=10s #success=1 #failure=3
+#     Readiness:      http-get http://:http/health delay=0s timeout=1s period=10s #success=1 #failure=3
