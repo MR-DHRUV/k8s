@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: apache-service
+  namespace: apache
+spec:
+  selector:
+    app: apache # name of the pod which we want to expose
+  ports:
+    - protocol: TCP
+      port: 80 # port on which service will be exposed
+      targetPort: 80 # pod's port on which application is running
+  type: ClusterIP

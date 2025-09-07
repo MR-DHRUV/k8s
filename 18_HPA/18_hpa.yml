@@ -1,0 +1,40 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+metadata:
+  name: apache-hpa
+  namespace: apache
+spec:
+  scaleTargetRef: # what to scale?
+    apiVersion: apps/v1 # api version of the target resource
+    kind: Deployment # kind of the target resource
+    name: apache-deployment # name of the target resource
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 5 # target average CPU utilization percentage
+
+# Metrics should be available
+# kubectl top node
+
+# Install Metrics Server
+# kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+# See metrics
+# kubectl top node # shows nodes consuming high CPU/Memory
+
+# kubectl top pod -n apache # shows pods consuming high CPU/Memory
+
+# forward port
+# kubectl port-forward service/apache-service -n apache 8080:80 --address=0.0.0.0 &
+
+# simulate load
+# create a pod to run load generator commands
+# 1. kubectl run -it --tty load-generator --image=busybox -n apache /bin/sh
+
+# Write a loop to generate load on apache server
+# while true; do wget -q -O- http://apache-service.apache.svc.cluster.local; done
