@@ -1,0 +1,30 @@
+kind: VerticalPodAutoscaler
+apiVersion: autoscaling.k8s.io/v1
+metadata:
+  name: apache-vpa
+  namespace: apache
+spec:
+  targetRef: # what to scale?
+    apiVersion: apps/v1 # api version of the target resource
+    kind: Deployment # kind of the target resource
+    name: apache-deployment # name of the target resource
+  updatePolicy:
+    updateMode: "Auto"
+    
+
+# Install vpa
+# git clone https://github.com/kubernetes/autoscaler.git
+# follow the steps in readme
+
+# forward port
+# kubectl port-forward service/apache-service -n apache 8080:80 --address=0.0.0.0 &
+
+# simulate load
+# create a pod to run load generator commands
+# 1. kubectl run -it --tty load-generator --image=busybox -n apache /bin/sh
+
+# Write a loop to generate load on apache server
+# while true; do wget -q -O- http://apache-service.apache.svc.cluster.local; done
+
+# kubectl top pod -n apache
+# kubectl get vpa -n apache

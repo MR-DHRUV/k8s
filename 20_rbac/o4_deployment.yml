@@ -1,0 +1,23 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: apache-deployment
+  namespace: apache
+spec:
+  replicas: 1
+  selector: # defines the pods to be selected
+    matchLabels:
+      app: apache
+  # Pod template: same as pod.yaml
+  template:
+    metadata:
+      name: apache-dep-pod
+      labels:
+        app: apache
+    spec:
+      serviceAccountName: apache-user
+      containers:
+      - name: apache
+        image: httpd:latest
+        ports:
+        - containerPort: 80
