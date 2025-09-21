@@ -1,0 +1,78 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: databases.mrdhruv.tech
+spec:
+  group: mrdhruv.tech
+  scope: Namespaced
+  names:
+    plural: databases
+    singular: database
+    kind: Database
+    shortNames:
+      - db
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required:
+                - engine
+                - version
+                - storage
+                - port
+                - rootPassword
+              properties:
+                engine:
+                  type: string
+                  description: Database engine
+                  enum:
+                    - mysql
+                    - postgres
+                version:
+                  type: string
+                  description: Database version
+                storage:
+                  type: integer
+                  description: Database storage size in MiB
+                  minimum: 20
+                  maximum: 10240
+                port:
+                  type: integer
+                  description: Database port
+                  minimum: 1
+                  maximum: 65535
+                rootPassword:
+                  type: string
+                  description: Root password for the database
+
+---
+# Example usage of the above CRD
+
+# Create a namespace for the custom resource
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: db
+
+--- 
+
+# Create a custom resource of kind Database
+apiVersion: mrdhruv.tech/v1
+kind: Database
+metadata:
+  name: mydb
+  namespace: default
+spec:
+  engine: mysql
+  version: "8.0"
+  storage: 100
+  port: 3306
+  rootPassword: my-secret-password
+
+# kubectl get databases -n db
